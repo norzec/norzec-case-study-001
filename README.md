@@ -1,381 +1,274 @@
 # NORZEC Case Study #001
+
 ## Reconstrução Inteligente de Dados Meteorológicos com Machine Learning
 
-**Autores:** NORZEC, LDA  
-**Data:** Junho 2026  
-**Localização:** Chimoio, Moçambique  
-**Fonte de Dados:** NASA POWER LARC  
+**NORZEC, LDA**
+**Chimoio, Moçambique**
+**Junho de 2026**
 
 ---
 
-## 📋 Resumo Executivo
+## Visão Geral
 
-Este repositório contém a análise completa e metodologia para reconstrução de séries temporais meteorológicas incompletas utilizando Machine Learning. 
+Este estudo demonstra como técnicas de Machine Learning podem ser utilizadas para reconstruir séries meteorológicas incompletas, reduzindo perdas de informação e aumentando a confiabilidade de análises climáticas, ambientais e agroclimáticas.
 
-**Situação:** 11 anos de dados meteorológicos com 25% de valores faltantes  
-**Solução:** Random Forest + validação estatística rigorosa  
-**Resultado:** 99.09% de precisão (R² = 0.9909)  
+Utilizando dados meteorológicos da NASA POWER para Chimoio, Moçambique, simulou-se um cenário operacional real com 25% de dados ausentes. Em seguida, aplicou-se um modelo Random Forest para reconstrução das observações faltantes.
 
-Dados incompletos **não precisam significar decisões imperfeitas.**
+### Resultado Principal
 
----
+* R² = 0.9909
+* MAE = 0.25 °C
+* RMSE = 0.33 °C
 
-## 🎯 Contexto do Problema
-
-Em muitos projetos científicos e operacionais na África, dados meteorológicos incompletos são uma barreira recorrente:
-
-- Sensores quebram ou deixam de funcionar
-- Interrupções no monitoramento causam lacunas temporais
-- Falhas operacionais resultam em observações perdidas
-
-Quando 25% dos dados desaparecem, a maioria dos projetos:
-- Interrompe análises
-- Reduz confiança em decisões
-- Aumenta custos de recolha de novos dados
-
-**NORZEC demonstra:** usando Machine Learning pragmático e validado, é possível recuperar essas informações com fidelidade suficiente para análises robustas.
+Os resultados indicam elevada capacidade de reconstrução da variável temperatura média, preservando a coerência física do sistema atmosférico analisado.
 
 ---
 
-## 📊 Dados Utilizados
+## Contexto
+
+A indisponibilidade de dados meteorológicos é um problema recorrente em diversas regiões do mundo, especialmente em contextos com limitações de infraestrutura de monitoramento.
+
+Falhas de sensores, interrupções operacionais e lacunas históricas comprometem:
+
+* Estudos climáticos;
+* Zoneamento agroclimático;
+* Modelagem hidrológica;
+* Planejamento energético;
+* Avaliações de risco ambiental.
+
+Este estudo investiga até que ponto algoritmos de Machine Learning podem recuperar informações ausentes sem comprometer a qualidade analítica dos dados.
+
+---
+
+## Dados Utilizados
 
 ### Fonte
-**NASA POWER LARC** — Plataforma de dados climáticos de alta resolução espacial
-- **Coordenadas:** 19.1164°S, 33.4833°E (Chimoio, Moçambique)
-- **Período:** 2015–2025 (11 anos)
-- **Resolução:** Dados diários agregados a mensais (80 observações)
 
-### Variáveis
-| Variável | Unidade | Tipo | Descrição |
-|---|---|---|---|
-| T2M | °C | Alvo | Temperatura Média Diária |
-| T2M_MAX | °C | Preditor | Temperatura Máxima Diária |
-| T2M_MIN | °C | Preditor | Temperatura Mínima Diária |
-| RH2M | % | Preditor | Umidade Relativa |
-| PRECTOTCORR | mm | Preditor | Precipitação Total Corrigida |
-| WS2M | m/s | Preditor | Velocidade do Vento |
-| ALLSKY_SFC_SW_DWN | W/m² | Preditor | Radiação Solar Incidente |
-| PS | kPa | Preditor | Pressão Atmosférica |
-| T2MDEW | °C | Preditor | Ponto de Orvalho |
+NASA POWER (Prediction Of Worldwide Energy Resources)
 
----
+https://power.larc.nasa.gov
 
-## 🔬 Metodologia
+### Localização
 
-### Abordagem em 7 Etapas
+Chimoio, Moçambique
 
-1. **Dados Originais** — Aquisição de 80 observações mensais (9 variáveis)
-2. **Introdução de Falhas** — Remoção artificial de 25% (160 valores) para simular cenário real
-3. **Análise Exploratória** — Estatísticas descritivas e detecção de outliers
-4. **Matriz de Correlação Física** — Validação de relações entre variáveis
-5. **Treinamento de Random Forest** — Modelo com 100 árvores, 5-fold CV, random_state=42
-6. **Reconstrução das Lacunas** — Predição dos valores removidos
-7. **Validação Estatística** — MAE, RMSE, R², distribuição de erros
+* Latitude: 19.1164° S
+* Longitude: 33.4833° E
 
-### Técnicas Aplicadas
+### Variáveis Utilizadas
 
-- **Algoritmo:** Random Forest (scikit-learn)
-- **Validação:** 5-fold Stratified Cross-Validation
-- **Métricas:** MAE, RMSE, R², Coeficiente de Gini
-- **Análise de Importância:** Feature Importance (Gini)
-- **Distribuição de Erros:** Histograma + normalidade
+| Variável          | Descrição                       |
+| ----------------- | ------------------------------- |
+| T2M               | Temperatura média               |
+| T2M_MAX           | Temperatura máxima              |
+| T2M_MIN           | Temperatura mínima              |
+| RH2M              | Humidade relativa               |
+| PRECTOTCORR       | Precipitação                    |
+| WS2M              | Velocidade do vento             |
+| ALLSKY_SFC_SW_DWN | Radiação solar                  |
+| PS                | Pressão atmosférica             |
+| T2MDEW            | Temperatura do ponto de orvalho |
 
 ---
 
-## 📈 Resultados
+## Metodologia
 
-### Métricas Principais
+O fluxo metodológico foi composto por sete etapas:
 
-```
-R² (Coeficiente de Determinação):  0.9909 (99.09%)
-MAE (Erro Médio Absoluto):         0.25°C
-RMSE (Raiz do Erro Quadrático):    0.33°C
-```
+1. Aquisição dos dados meteorológicos.
+2. Controle de qualidade e pré-processamento.
+3. Introdução artificial de 25% de valores ausentes.
+4. Análise exploratória dos dados.
+5. Treinamento de modelo Random Forest.
+6. Reconstrução das observações removidas.
+7. Avaliação estatística da reconstrução.
 
-### Interpretação
+### Algoritmo
 
-O modelo explica **99.09% da variância** em temperatura, com:
-- Erro médio inferior a **0.3°C** — fidelidade suficiente para análises climáticas
-- Distribuição de erros centrada em zero — sem viés sistemático
-- **1.004 registros de teste** validados — amostra robusta
+Random Forest Regressor
 
-### Feature Importance
+### Configuração
 
-| Variável | Importância (Gini) |
-|---|---|
-| T2M_MIN | 0.6445 (64.45%) |
-| T2M_MAX | 0.3410 (34.10%) |
-| T2MDEW | 0.0072 |
-| PS | 0.0030 |
-| WS2M | 0.0014 |
-| RH2M | 0.0013 |
-| ALLSKY_SFC_SW_DWN | 0.0011 |
-| PRECTOTCORR | 0.0005 |
+* 100 árvores
+* random_state = 42
+* Validação cruzada
+* Avaliação por métricas de regressão
 
-**Conclusão:** Temperatura mínima e máxima dominam, respondendo por ~98% da capacidade preditiva. Isso demonstra **coerência física** do modelo — por definição termodinâmica, a temperatura média é determinada pelos extremos diários.
+### Métricas
+
+* Coeficiente de determinação (R²)
+* Erro médio absoluto (MAE)
+* Raiz do erro quadrático médio (RMSE)
 
 ---
 
-## 🔍 Descobertas Principais
+## Principais Resultados
 
-1. **Coerência Física Comprovada:** O modelo não aprendeu padrões spurious, mas capturou relações termodinâmicas reais
-2. **Robustez em Dados Incompletos:** Mesmo com 25% faltando, o modelo reconstruiu com precisão excepcional
-3. **Aplicação Prática:** A metodologia é transferível para outras localizações e períodos
+### Desempenho
+
+| Métrica | Valor   |
+| ------- | ------- |
+| R²      | 0.9909  |
+| MAE     | 0.25 °C |
+| RMSE    | 0.33 °C |
+
+### Importância das Variáveis
+
+O modelo identificou como principais preditores:
+
+1. Temperatura mínima (T2M_MIN)
+2. Temperatura máxima (T2M_MAX)
+
+Juntas, estas variáveis representam aproximadamente 98% da importância preditiva do modelo.
+
+Este resultado é fisicamente consistente, uma vez que a temperatura média é fortemente condicionada pelos extremos térmicos diários.
 
 ---
 
-## 💡 Aplicações Práticas
+## Aplicações Potenciais
 
-Este método pode ser aplicado em múltiplos contextos:
+A metodologia pode ser aplicada em:
 
-| Setor | Aplicação |
-|---|---|
-| 🌾 **Agricultura** | Zoneamento agroclimático, cálculo de índices de déficit hídrico |
-| 🌧️ **Recursos Hídricos** | Séries de precipitação para modelagem hidrológica |
-| ⚡ **Energia** | Completação de bases de geração solar/eólica |
-| 🏥 **Saúde Pública** | Estudos ambientais e epidemiológicos (malária, dengue) |
-| 🏗️ **Infraestrutura** | Monitoramento climático para planejamento urbano |
-| 🌍 **Monitoramento Ambiental** | Reconstituição de séries históricas em observatórios |
+### Agricultura
+
+* Zoneamento agroclimático
+* Calendários agrícolas
+* Seguros paramétricos
+
+### Recursos Hídricos
+
+* Modelagem hidrológica
+* Estudos de disponibilidade hídrica
+
+### Energia
+
+* Séries climáticas para energia solar
+* Estudos de potencial eólico
+
+### Saúde Pública
+
+* Modelagem ambiental de doenças sensíveis ao clima
+
+### Planeamento Territorial
+
+* Avaliações de risco climático
+* Infraestrutura resiliente
 
 ---
 
-## 📂 Estrutura do Repositório
+## Estrutura do Repositório
 
-```
-case-study-001-temperature-reconstruction/
+```text
+norzec-case-study-001/
 │
-├─ README.md                          # Este ficheiro
-├─ CONTRIBUINDO.md                    # Diretrizes para contribuições
-├─ LICENSE                            # MIT License
+├── README.md
+├── CONTRIBUINDO.md
+├── LICENSE
 │
-├─ data/
-│  ├─ raw/
-│  │  └─ chimoio_2015_2025_raw.csv   # Dados brutos NASA POWER LARC
-│  │
-│  ├─ processed/
-│  │  ├─ chimoio_with_missing.csv     # Dados com 25% faltantes
-│  │  └─ chimoio_reconstructed.csv    # Dados após reconstrução
-│  │
-│  └─ README_DATA.md                  # Documentação de dados
+├── data/
+│   ├── raw/
+│   │   └── nasa_power_chimoio_raw.csv
+│   │
+│   └── processed/
+│       ├── nasa_power_chimoio_with_missing.csv
+│       └── nasa_power_chimoio_reconstructed.csv
 │
-├─ notebooks/
-│  ├─ 01_exploratory_analysis.ipynb    # EDA + estatísticas descritivas
-│  ├─ 02_missing_data_simulation.ipynb # Introdução de falhas
-│  ├─ 03_random_forest_training.ipynb  # Treinamento do modelo
-│  └─ 04_validation_analysis.ipynb     # Validação e análise de erros
+├── figures/
+│   ├── 01_correlation_matrix.png
+│   ├── 02_reconstruction_main.png
+│   ├── 03_before_after_carousel.png
+│   └── 04_feature_importance_carousel.png
 │
-├─ src/
-│  ├─ __init__.py
-│  ├─ data_loader.py                  # Carregamento e tratamento de dados
-│  ├─ model.py                        # Definição e treinamento do Random Forest
-│  ├─ validation.py                   # Cálculo de métricas e análises
-│  └─ visualizations.py               # Geração de gráficos
+├── metrics/
+│   ├── metrics.csv
+│   ├── descriptive_statistics.csv
+│   └── feature_importance.csv
 │
-├─ results/
-│  ├─ figures/
-│  │  ├─ correlation_matrix.png
-│  │  ├─ before_after_comparison.png
-│  │  ├─ feature_importance.png
-│  │  └─ error_distribution.png
-│  │
-│  ├─ metrics/
-│  │  ├─ validation_metrics.json
-│  │  └─ cross_validation_scores.json
-│  │
-│  └─ summary.txt                     # Resumo dos resultados
+├── src/
+│   └── criar_boletim_FINAL.py
 │
-├─ reports/
-│  ├─ NORZEC_CaseStudy001_Report.html  # Relatório técnico completo (HTML)
-│  └─ NORZEC_CaseStudy001_Report.pdf   # Versão em PDF
-│
-├─ requirements.txt                    # Dependências Python
-├─ setup.py                            # Setup para instalação
-│
-└─ .gitignore                          # Ficheiros a ignorar no Git
-
+└── docs/
 ```
 
 ---
 
-## 🚀 Como Começar
+## Visualizações
 
-### Pré-requisitos
+O repositório inclui:
 
-- Python 3.8+
-- pip ou conda
-
-### Instalação
-
-1. **Clone o repositório**
-```bash
-git clone https://github.com/norzec-lda/case-study-001-temperature-reconstruction.git
-cd case-study-001-temperature-reconstruction
-```
-
-2. **Crie um ambiente virtual**
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou
-venv\Scripts\activate     # Windows
-```
-
-3. **Instale as dependências**
-```bash
-pip install -r requirements.txt
-```
-
-### Executar a Análise
-
-1. **Jupyter Notebooks** — Execute na ordem:
-```bash
-jupyter notebook notebooks/01_exploratory_analysis.ipynb
-jupyter notebook notebooks/02_missing_data_simulation.ipynb
-jupyter notebook notebooks/03_random_forest_training.ipynb
-jupyter notebook notebooks/04_validation_analysis.ipynb
-```
-
-2. **Scripts Python** — Ou execute como módulo:
-```bash
-python -m src.model --input data/raw/chimoio_2015_2025_raw.csv
-```
-
-3. **Ver relatório**
-```bash
-# Abra em navegador
-open reports/NORZEC_CaseStudy001_Report.html
-```
+* Matriz de correlação entre variáveis meteorológicas;
+* Comparação entre dados originais e reconstruídos;
+* Importância das variáveis preditoras;
+* Métricas de desempenho do modelo.
 
 ---
 
-## 📊 Reproduzibilidade
+## Reprodutibilidade
 
-Este estudo segue **padrões de pesquisa reproduzível:**
+Este estudo foi desenvolvido com foco em transparência e reprodutibilidade.
 
-✅ **Dados públicos** — NASA POWER LARC (acesso aberto)  
-✅ **Código aberto** — GitHub (MIT License)  
-✅ **Metodologia documentada** — README + docstrings  
-✅ **Random seed fixo** — `random_state=42` em todos os modelos  
-✅ **Métricas completas** — MAE, RMSE, R², distribuição de erros  
+Características:
 
-### Reproduzir os Resultados
-
-```bash
-# Executar todo o pipeline
-python -m src.model \
-  --input data/raw/chimoio_2015_2025_raw.csv \
-  --missing-rate 0.25 \
-  --seed 42 \
-  --output results/
-```
-
-Resultado esperado:
-```
-R² = 0.9909
-MAE = 0.25°C
-RMSE = 0.33°C
-```
+* Dados públicos;
+* Metodologia documentada;
+* Código aberto;
+* Controle de aleatoriedade;
+* Métricas de validação reportadas.
 
 ---
 
-## 📚 Referências
+## Referências
 
-### Datasets
-- **NASA POWER LARC:** https://power.larc.nasa.gov/
-- **Coordenadas:** Chimoio, Moçambique (19.1164°S, 33.4833°E)
+Breiman, L. (2001). Random Forests. Machine Learning, 45(1), 5–32.
 
-### Metodologia
-- Breiman, L. (2001). Random Forests. *Machine Learning*, 45(1), 5-32.
-- Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of Statistical Learning*. Springer.
+Hastie, T., Tibshirani, R., Friedman, J. (2009). The Elements of Statistical Learning. Springer.
 
-### Contexto Africano
-- WFP (2024). Food Security Updates — Mozambique
-- FEWS NET (2024). Famine Early Warning Systems Network
+NASA POWER Data Access Viewer:
+
+https://power.larc.nasa.gov
 
 ---
 
-## 👥 Autores
+## Sobre a NORZEC
 
-**NORZEC, LDA**  
-📍 Chimoio, Moçambique  
-📧 norzecmz@gmail.com  
-🌐 norzec.github.io  
-📱 wa.me/258878787963  
+A NORZEC atua na interseção entre ciência de dados, inteligência climática, geotecnologias e suporte à decisão.
 
-**Liderança:** Francisco José Noris (CEO & PhD Fellow em Engenharia Agrícola)
+Áreas de atuação:
 
----
-
-## 📄 Licença
-
-Este projeto está licenciado sob a **MIT License** — veja `LICENSE` para detalhes.
-
-Resumidamente: Use livremente em projetos académicos, comerciais ou pessoais. Atribua a NORZEC nos créditos.
+* Inteligência climática;
+* Monitoramento ambiental;
+* Ciência de dados geoespaciais;
+* Gestão de riscos;
+* Planeamento territorial.
 
 ---
 
-## 🤝 Contribuições
+## Licença
 
-Valorizamos contribuições!
+Este projeto está licenciado sob a MIT License.
 
-1. Faça fork do repositório
-2. Crie uma branch para a sua feature (`git checkout -b feature/melhoria`)
-3. Commit as mudanças (`git commit -am 'Adiciona melhoria'`)
-4. Push para a branch (`git push origin feature/melhoria`)
-5. Abra um Pull Request
-
-Veja `CONTRIBUINDO.md` para detalhes.
+Consulte o arquivo LICENSE para mais informações.
 
 ---
 
-## ⭐ Citação
+## Contato
 
-Se usar este trabalho em pesquisa ou publicações, cite como:
+NORZEC, LDA
 
-```bibtex
-@dataset{norzec2026,
-  author = {Noris, Francisco José and NORZEC, LDA},
-  title = {Case Study #001: Intelligent Reconstruction of Meteorological Data with Machine Learning},
-  year = {2026},
-  url = {https://github.com/norzec-lda/case-study-001-temperature-reconstruction},
-  note = {Chimoio, Mozambique. Data source: NASA POWER LARC}
-}
-```
+Email: [norzecmz@gmail.com](mailto:norzecmz@gmail.com)
+
+GitHub: https://github.com/norzec
+
+LinkedIn: https://www.linkedin.com/company/norzec
+
+Website institucional: em desenvolvimento
 
 ---
 
-## ❓ FAQ
+## Impacto
 
-**P: Posso usar este código para minha localização?**  
-R: Sim! O código é genérico. Basta trocar o dataset pela sua localização e executar.
+Dados incompletos não precisam resultar em decisões incompletas.
 
-**P: Por que Random Forest em vez de LSTM ou outras técnicas?**  
-R: Random Forest foi escolhido por: (1) robustez com dados incompletos, (2) interpretabilidade (feature importance), (3) baixa necessidade de tuning, (4) validação estatística clara.
+Este case study demonstra como abordagens robustas de Machine Learning podem ampliar a utilidade de séries climáticas históricas, fortalecendo aplicações em agricultura, recursos hídricos, energia e gestão de riscos em contextos de recursos limitados.
 
-**P: Os dados são reais ou simulados?**  
-R: **100% reais**. Dados de NASA POWER LARC. Os 25% faltantes foram removidos artificialmente para simular cenários reais.
-
-**P: Posso adaptar para outros fenómenos (precipitação, radiação)?**  
-R: Sim. A metodologia é agnóstica ao domínio — funciona para qualquer variável contínua com correlação entre preditores.
-
----
-
-## 📞 Suporte
-
-- 📧 Email: norzecmz@gmail.com
-- 💬 WhatsApp: wa.me/258878787963
-- 🌐 Website: norzec.github.io
-- 📱 Instagram: @norzec_lda
-- 🔗 LinkedIn: linkedin.com/company/norzec-lda
-
----
-
-## 🎯 Impacto
-
-Este case study demonstra como Machine Learning pragmático contorna barreiras recorrentes em contextos de **recursos limitados**. Na África, dados incompletos não devem ser barreira para análises robustas.
-
-**NORZEC — Matematizando Incertezas**
-
----
-
-*Última atualização: Junho 2026*
+**NORZEC — Inteligência para transformar dados em decisão.**
