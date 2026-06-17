@@ -259,7 +259,7 @@ Email: [norzecmz@gmail.com](mailto:norzecmz@gmail.com)
 
 GitHub: https://github.com/norzec
 
-LinkedIn: https://www.linkedin.com/company/norzec
+LinkedIn: https://www.linkedin.com/company/norzec-lda
 
 Website institucional: em desenvolvimento
 
